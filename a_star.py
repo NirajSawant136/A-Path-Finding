@@ -5,7 +5,7 @@ import time
 pygame.init()
 
 global size
-size = 30
+size = 25
 cell_size = 20
 WIDTH, HEIGTH = size*cell_size, size*cell_size
 
@@ -76,7 +76,7 @@ for i in range(size):
 		cells.append(cell((i, j), 100))
 
 source = (0, 0)
-target = (size-1, size-1)
+target = (15, size-10)
 # cells[index(target)].source = (4,1)
 
 global openList, closedList
@@ -93,7 +93,7 @@ if source in Cell:
 if target in Cell:
 	Cell.remove(target)
 
-for i in range(300):
+for i in range(170):
 	blockedCells.append(random.choice(Cell))
 
 for cell in blockedCells:
@@ -119,7 +119,17 @@ openList[0].f = 0
 search = True
 while len(openList) > 0 and search:
 
-	q = next(cell.pos for cell in openList if cell.f == min(cell.f for cell in openList))
+	#q = next(cell.pos for cell in openList if cell.f == min(cell.f for cell in openList))
+	F = 100
+	q = (-1,-1)
+	for cell in openList:
+		if cell.f < F:
+			F = cell.f
+			q = cell.pos
+	
+	# if q != source:
+	# 	pygame.draw.rect(MAZE, (250,150,50), (q[1]*cell_size, q[0]*cell_size, cell_size, cell_size), 0)
+	# 	pygame.display.update()
 
 	openList.remove(cells[index(q)])
 
@@ -159,6 +169,9 @@ while len(openList) > 0 and search:
 
 						if notSkipped and cells[index(successor)] not in openList:
 							openList.append(cells[index(successor)])
+							pygame.draw.rect(MAZE, (50,250,50), (source[1]*cell_size, source[0]*cell_size, cell_size, cell_size), 0)
+							pygame.draw.rect(MAZE, (250,50,125), (successor[1]*cell_size, successor[0]*cell_size, cell_size, cell_size), 0)
+							pygame.display.update()
 
 	closedList.append(cells[index(q)])
 	if found:
@@ -176,24 +189,24 @@ print("path -> {}".format(path))
 print("Length -> {}".format(len(path)))
 print("openList -> {}".format(len(openList)))
 
-# MAZE.fill((255, 255, 255))
-# pygame.draw.rect(MAZE, (50,250,50), (source[1]*cell_size, source[0]*cell_size, cell_size, cell_size), 0)
-# pygame.draw.rect(MAZE, (250,50,50), (target[1]*cell_size, target[0]*cell_size, cell_size, cell_size), 0)
-# pygame.display.update()
+MAZE.fill((255, 255, 255))
+pygame.draw.rect(MAZE, (50,250,50), (source[1]*cell_size, source[0]*cell_size, cell_size, cell_size), 0)
+pygame.draw.rect(MAZE, (250,50,50), (target[1]*cell_size, target[0]*cell_size, cell_size, cell_size), 0)
+pygame.display.update()
+
+for cell in blockedCells:
+	pygame.draw.rect(MAZE, (50, 50, 50), (cell[1]*cell_size, cell[0]*cell_size, cell_size, cell_size), 0)
+	pygame.display.update()
+
+for i in range(size):
+	pygame.draw.line(MAZE, (0,0,0), (0, i*cell_size), (size*cell_size, i*cell_size))
+	pygame.draw.line(MAZE, (0,0,0), (i*cell_size, 0), (i*cell_size, size*cell_size))
+	pygame.display.update()
 
 for cell in path:
 	time.sleep(0.05)
 	pygame.draw.rect(MAZE, (50,50,250), (cell[1]*cell_size, cell[0]*cell_size, cell_size, cell_size), 0)
 	pygame.draw.rect(MAZE, BLACK, (cell[1]*cell_size, cell[0]*cell_size, cell_size, cell_size), 1)
-	pygame.display.update()
-
-# for cell in blockedCells:
-# 	pygame.draw.rect(MAZE, (50, 50, 50), (cell[1]*cell_size, cell[0]*cell_size, cell_size, cell_size), 0)
-# 	pygame.display.update()
-
-for i in range(size):
-	pygame.draw.line(MAZE, (0,0,0), (0, i*cell_size), (size*cell_size, i*cell_size))
-	pygame.draw.line(MAZE, (0,0,0), (i*cell_size, 0), (i*cell_size, size*cell_size))
 	pygame.display.update()
 
 run = True
